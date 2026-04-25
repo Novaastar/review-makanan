@@ -38,7 +38,7 @@ Aplikasi berbasis web untuk memberikan informasi dan review makanan lokal. Dilen
 
 1.  Clone repository ini:
     ```bash
-    git clone [https://github.com/username/review-makanan.git](https://github.com/username/review-makanan.git)
+    git clone [https://github.com/username/review-makanan.git](https://github.com/Novaastar/review-makanan.git)
     ```
 2.  Pindahkan folder ke direktori `htdocs` (XAMPP).
 3.  Impor database:
