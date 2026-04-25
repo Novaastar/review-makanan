@@ -40,7 +40,7 @@ Aplikasi berbasis web untuk memberikan informasi dan review makanan lokal. Dilen
     ```bash
     git clone [https://github.com/username/review-makanan.git](https://github.com/Novaastar/review-makanan.git)
     ```
-2.  Pindahkan folder ke direktori `htdocs` (XAMPP).
+2.  Pindahkan folder ke direktori `htdocs` (Laragon).
 3.  Impor database:
     *   Buka `phpMyAdmin`.
     *   Buat database baru bernama `db_makanan`.
