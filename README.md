@@ -43,7 +43,7 @@ Aplikasi berbasis web untuk memberikan informasi dan review makanan lokal. Dilen
 2.  Pindahkan folder ke direktori `htdocs` (Laragon).
 3.  Impor database:
     *   Buka `phpMyAdmin`.
-    *   Buat database baru bernama `db_makanan`.
+    *   Buat database baru bernama `review_makanan`.
     *   Impor file `.sql` yang tersedia di folder `database/`.
 4.  Konfigurasi koneksi:
     *   Buka file `config/koneksi.php`.
