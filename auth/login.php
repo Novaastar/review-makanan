@@ -2,21 +2,67 @@
 session_start();
 include '../config/koneksi.php';
 
-if(isset($_POST['login'])){
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+function normalize_email(?string $email): string {
+    $email = trim((string)$email);
+    return strtolower($email);
+}
 
-    $result = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
-    $data = mysqli_fetch_assoc($result);
+function get_post_string(string $key): string {
+    return isset($_POST[$key]) ? trim((string)$_POST[$key]) : '';
+}
 
-    if(!$data) {
-        $error = "Email tidak ditemukan!";
-    } elseif(!password_verify($password, $data['password'])) {
-        $error = "Password yang Anda masukkan salah!";
+function find_user_by_email(mysqli $conn, string $email): ?array {
+    $sql = "SELECT * FROM users WHERE email = ? LIMIT 1";
+    $stmt = mysqli_prepare($conn, $sql);
+    if (!$stmt) return null;
+
+    mysqli_stmt_bind_param($stmt, "s", $email);
+    if (!mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_close($stmt);
+        return null;
+    }
+
+    $result = mysqli_stmt_get_result($stmt);
+    $row = $result ? mysqli_fetch_assoc($result) : null;
+    mysqli_stmt_close($stmt);
+    return $row ?: null;
+}
+
+function attempt_login(mysqli $conn, string $email, string $password): array {
+    if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return ['ok' => false, 'error' => 'Email tidak valid!'];
+    }
+    if ($password === '') {
+        return ['ok' => false, 'error' => 'Password wajib diisi!'];
+    }
+
+    $user = find_user_by_email($conn, $email);
+    if (!$user) {
+        return ['ok' => false, 'error' => 'Email tidak ditemukan!'];
+    }
+    if (!isset($user['password']) || !password_verify($password, (string)$user['password'])) {
+        return ['ok' => false, 'error' => 'Password yang Anda masukkan salah!'];
+    }
+
+    return ['ok' => true, 'user' => $user];
+}
+
+function redirect_to(string $path): void {
+    header("Location: " . $path);
+    exit;
+}
+
+$error = null;
+if (isset($_POST['login'])) {
+    $email = normalize_email(get_post_string('email'));
+    $password = get_post_string('password');
+
+    $result = attempt_login($conn, $email, $password);
+    if (!$result['ok']) {
+        $error = $result['error'];
     } else {
-        $_SESSION['user'] = $data;
-        header("Location: ../index.php");
-        exit;
+        $_SESSION['user'] = $result['user'];
+        redirect_to("../index.php");
     }
 }
 ?>
